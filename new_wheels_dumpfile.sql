@@ -1,19 +1,10 @@
 /*
-
------------------------------------------------------------------------------------------------------------------------------------
-													    Guidelines
------------------------------------------------------------------------------------------------------------------------------------
-
-The provided document is a guide for the project. Follow the instructions and take the necessary steps to finish
-the project in the SQL file			
-
 -----------------------------------------------------------------------------------------------------------------------------------
                                                          Queries
                                                
 -----------------------------------------------------------------------------------------------------------------------------------*/
   
-/*-- QUESTIONS RELATED TO CUSTOMERS
-     [Q1] What is the distribution of customers across states?
+/*-- [Q1] What is the distribution of customers across states?
      Hint: For each state, count the number of customers.*/
 
 SELECT state, COUNT(DISTINCT customer_id) AS number_of_customers
@@ -50,6 +41,14 @@ Hint: Need the percentage of different types of customer feedback in each quarte
 
 Hint: For each vehicle make what is the count of the customers.*/
 
+SELECT 
+    vehicle_maker, 
+    COUNT(DISTINCT o.customer_id) AS number_of_customers
+FROM order_t o
+JOIN product_t p ON o.product_id = p.product_id
+GROUP BY vehicle_maker
+ORDER BY number_of_customers DESC
+LIMIT 5;
 
 
 -- ---------------------------------------------------------------------------------------------------------------------------------
