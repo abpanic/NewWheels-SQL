@@ -16,6 +16,10 @@ the project in the SQL file
      [Q1] What is the distribution of customers across states?
      Hint: For each state, count the number of customers.*/
 
+SELECT state, COUNT(DISTINCT customer_id) AS number_of_customers
+FROM customer_t
+GROUP BY state
+ORDER BY number_of_customers DESC;
 
 -- ---------------------------------------------------------------------------------------------------------------------------------
 
@@ -23,7 +27,7 @@ the project in the SQL file
 -- Very Bad is 1, Bad is 2, Okay is 3, Good is 4, Very Good is 5.
 
 Hint: Use a common table expression and in that CTE, assign numbers to the different customer ratings. 
-      Now average the feedback for each quarter. 
+      Now average the feedback for each quarter. */
 
 
 
@@ -36,7 +40,7 @@ Hint: Use a common table expression and in that CTE, assign numbers to the diffe
 Hint: Need the percentage of different types of customer feedback in each quarter. Use a common table expression and
 	  determine the number of customer feedback in each category as well as the total number of customer feedback in each quarter.
 	  Now use that common table expression to find out the percentage of different types of customer feedback in each quarter.
-      Eg: (total number of very good feedback/total customer feedback)* 100 gives you the percentage of very good feedback.
+      Eg: (total number of very good feedback/total customer feedback)* 100 gives you the percentage of very good feedback.*/
       
 
 
@@ -54,6 +58,22 @@ Hint: For each vehicle make what is the count of the customers.*/
 
 Hint: Use the window function RANK() to rank based on the count of customers for each state and vehicle maker. 
 After ranking, take the vehicle maker whose rank is 1.*/
+WITH VehiclePreferences AS (
+    SELECT 
+        c.state, 
+        p.vehicle_maker, 
+        COUNT(DISTINCT o.customer_id) AS number_of_customers,
+        RANK() OVER(PARTITION BY c.state ORDER BY COUNT(DISTINCT o.customer_id) DESC) AS rank
+    FROM customer_t c
+    JOIN order_t o ON c.customer_id = o.customer_id
+    JOIN product_t p ON o.product_id = p.product_id
+    GROUP BY c.state, p.vehicle_maker
+)
+
+SELECT state, vehicle_maker, number_of_customers
+FROM VehiclePreferences
+WHERE rank = 1
+ORDER BY state;
 
 
 
